@@ -1,0 +1,25 @@
+name: Deploy and Test Env
+
+on:
+  push:
+    branches:
+      - main  # Or any branch you prefer
+
+jobs:
+  test-env:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Remote Workflow
+        uses: anecdotes-ai/remote-workflow-control@latest
+        with:
+          github-auth-token: ${{ secrets.REMOTE_GITHUB_KEY }}  # Ensure this token has access to your private repo
+          workflow-org: 'your-username-or-org'  # Your GitHub username or organization
+          workflow-repo: 'myrepo-pro'
+          workflow-yaml: 'pro.yml'  # The YAML file in the private repo
+          workflow-branch: 'main'  # Branch in the private repo
+          workflow-inputs: '{"trigger_uuid": "your-unique-identifier"}'  # Replace with your UUID
+          wait-timeout-in-minutes: '10'
+
+      - name: Test Deployment
+        run: |
+          # Your test commands here
