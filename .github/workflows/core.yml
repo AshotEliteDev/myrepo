@@ -3,7 +3,7 @@ name: Trigger Elementor Pro Tests
 on:
   pull_request:
     branches:
-      - test-1  # Specify the branch for pull request events
+      - main  # Specify the branch for pull request events
     types:
       [ labeled ]
 
