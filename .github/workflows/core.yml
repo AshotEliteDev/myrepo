@@ -6,7 +6,7 @@ on:
       - main  # or the branch you want to trigger from
 
 jobs:
-  test-env:
+  test-test:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Remote Workflow
