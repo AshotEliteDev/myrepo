@@ -15,12 +15,21 @@
      steps:
        - name: Trigger Remote Workflow
          run: |
-           curl -X POST \
+           response=$(curl -X POST \
              -H "Authorization: token ${{ secrets.REMOTE_GITHUB_KEY }}" \
              -H "Accept: application/vnd.github.v3+json" \
-             https://api.github.com/repos/AshotEliteDev/tc/actions/workflows/main.yml/dispatches \
-             -d '{"event_type": "run-tc-workflow", "client_payload": {"branch": "dev1"}}'
+             -d '{"event_type": "run-tc-workflow", "client_payload": {"branch": "dev1"}}' \
+             https://api.github.com/repos/AshotEliteDev/tc/dispatches)
+           echo "Response: $response"
+       
+         # run: |
+         #   curl -X POST \
+         #     -H "Authorization: token ${{ secrets.REMOTE_GITHUB_KEY }}" \
+         #     -H "Accept: application/vnd.github.v3+json" \
+         #     https://api.github.com/repos/AshotEliteDev/tc/actions/workflows/main.yml/dispatches \
+         #     -d '{"ref":"main","inputs":{"trigger_uuid":"${{ github.sha }}", "custom_value": "Steve Jobs"}}'
              
              
-        # -d '{"ref":"main","inputs":{"trigger_uuid":"${{ github.sha }}", "custom_value": "Steve Jobs"}}'
+        # -d '{"event_type": "run-tc-workflow", "client_payload": {"branch": "dev1"}}'
+       
              
