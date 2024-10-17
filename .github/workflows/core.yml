@@ -2,13 +2,13 @@
 
  on:
    push:
-   pull_request:
-     types:
-       - labeled  # or the branch you want to trigger from
+   # pull_request:
+   #   types:
+   #     - labeled  # or the branch you want to trigger from
 
  jobs:
    test-test:
-     if: contains(github.event.label.name, 'ggg-pr')
+     # if: contains(github.event.label.name, 'ggg-pr')
      runs-on: ubuntu-latest
      steps:
        - name: Trigger Remote Workflow
