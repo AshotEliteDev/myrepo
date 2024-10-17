@@ -18,4 +18,4 @@ jobs:
           workflow-yaml: 'pro.yml'  # The YAML file in the private repo
           workflow-branch: 'main'  # Branch in the private repo
           workflow-inputs: '{\"trigger_uuid\": \"${{ github.sha }}\"}'  # Replace with your UUID
-          wait-timeout-in-minutes: '1'
+          wait-timeout-in-minutes: '2'
