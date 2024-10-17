@@ -9,13 +9,10 @@ jobs:
   test-env:
     runs-on: ubuntu-latest
     steps:
-      - name: Run Remote Workflow
-        uses: anecdotes-ai/remote-workflow-control@latest
-        with:
-          github-auth-token: ${{ secrets.REMOTE_GITHUB_KEY }}  # Ensure this token has access to your private repo
-          workflow-org: 'AshotEliteDev'  # Your GitHub username or organization
-          workflow-repo: 'myrepo-pro'
-          workflow-yaml: 'pro.yml'  # The YAML file in the private repo
-          workflow-branch: 'main'  # Branch in the private repo
-          # workflow-inputs: '{\"trigger_uuid\": \"${{ github.sha }}\"}'  # Replace with your UUID
-          wait-timeout-in-minutes: '1'
+      - name: Trigger Remote Workflow
+        run: |
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.REMOTE_GITHUB_KEY }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/AshotEliteDev/myrepo-pro/actions/workflows/pro.yml/dispatches \
+            -d '{"ref":"main","inputs":{"trigger_uuid":"${{ github.sha }}"}}'
