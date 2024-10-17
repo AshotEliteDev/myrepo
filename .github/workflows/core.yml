@@ -21,7 +21,7 @@ jobs:
           event-type: trigger-tests
           client-payload: '{"ref": "main", "inputs": {"trigger_uuid": "${{ github.sha }}"}}'
 
-
+# gggg
 # name: Trigger Remote Workflow
 
 # on:
