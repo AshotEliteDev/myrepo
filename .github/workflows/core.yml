@@ -2,6 +2,8 @@
 
  on:
    push:
+    branches:
+      - main
    # pull_request:
    #   types:
    #     - labeled  # or the branch you want to trigger from
@@ -17,5 +19,8 @@
              -H "Authorization: token ${{ secrets.REMOTE_GITHUB_KEY }}" \
              -H "Accept: application/vnd.github.v3+json" \
              https://api.github.com/repos/AshotEliteDev/tc/actions/workflows/main.yml/dispatches \
-             -d '{"ref":"main","inputs":{"trigger_uuid":"${{ github.sha }}", "custom_value": "Steve Jobs"}}'
+             -d '{"event_type": "run-tc-workflow", "client_payload": {"branch": "dev1"}}'
+             
+             
+        # -d '{"ref":"main","inputs":{"trigger_uuid":"${{ github.sha }}", "custom_value": "Steve Jobs"}}'
              
