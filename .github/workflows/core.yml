@@ -15,10 +15,13 @@
      steps:
        - name: Trigger Remote Workflow
          run: |
-           response=$(curl -X POST \
+            # Determine the branch name based on the event type
+            branch_name=${{ github.event_name == 'push' && github.ref || github.head_ref }}
+         
+            response=$(curl -X POST \
              -H "Authorization: token ${{ secrets.REMOTE_GITHUB_KEY }}" \
              -H "Accept: application/vnd.github.v3+json" \
-             -d '{"event_type": "run-tc-workflow", "client_payload": {"branch": "${{ github.head_ref }}"}}' \
+             -d '{"event_type": "run-tc-workflow", "client_payload": {"branch": "$branch_name"}}' \
              https://api.github.com/repos/AshotEliteDev/tc/dispatches)
            
           
