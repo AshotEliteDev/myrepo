@@ -1,14 +1,16 @@
-name: Trigger Remote Workflow
+name: Trigger Elementor Pro Tests
 
 on:
   push:
   pull_request:
+    branches:
+      - main  # Specify the branch for pull request events
     types:
        [ labeled ]  # or the branch you want to trigger from
 
 jobs:
-  test-test:
-    if: contains(github.event.label.name, 'ggg-pr')
+  check-label:
+    if: contains(github.event.label.name, 'run-pro-tests')
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Remote Workflow
@@ -18,3 +20,25 @@ jobs:
           repository: AshotEliteDev/tc
           event-type: trigger-tests
           client-payload: '{"ref": "main", "inputs": {"trigger_uuid": "${{ github.sha }}"}}'
+
+
+# name: Trigger Remote Workflow
+
+# on:
+#   pull_request:
+#     types:
+#       - labeled  # or the branch you want to trigger from
+
+# jobs:
+#   test-test:
+#     if: contains(github.event.label.name, 'ggg-pr')
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Trigger Remote Workflow
+#         run: |
+#           curl -X POST \
+#             -H "Authorization: token ${{ secrets.REMOTE_GITHUB_KEY }}" \
+#             -H "Accept: application/vnd.github.v3+json" \
+#             https://api.github.com/repos/AshotEliteDev/myrepo-pro/actions/workflows/pro.yml/dispatches \
+#             -d '{"ref":"main","inputs":{"trigger_uuid":"${{ github.sha }}"}}'
+
