@@ -1,6 +1,7 @@
  name: Trigger Remote Workflow
 
  on:
+   push:
    pull_request:
      types:
        - labeled  # or the branch you want to trigger from
