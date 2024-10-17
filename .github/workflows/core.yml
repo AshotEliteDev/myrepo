@@ -13,18 +13,20 @@
      # if: contains(github.event.label.name, 'ggg-pr')
      runs-on: ubuntu-latest
      steps:
+       - name: Extract branch name
+         shell: bash
+         run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+         id: extract_branch
+         
        - name: Trigger Remote Workflow
          run: |
-            # Determine the branch name based on the event type
-            branch_name=${{ github.event_name == 'push' && github.ref || github.head_ref }}
-         
             response=$(curl -X POST \
              -H "Authorization: token ${{ secrets.REMOTE_GITHUB_KEY }}" \
              -H "Accept: application/vnd.github.v3+json" \
-             -d '{"event_type": "run-tc-workflow", "client_payload": {"branch": "$branch_name"}}' \
+             -d '{"event_type": "run-tc-workflow", "client_payload": {"branch": "${{ steps.extract_branch.outputs.branch }}"}}' \
              https://api.github.com/repos/AshotEliteDev/tc/dispatches)
            
-          
+       
            
          # echo "Response: $response"
        
