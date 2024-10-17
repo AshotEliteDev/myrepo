@@ -20,6 +20,7 @@
              -H "Accept: application/vnd.github.v3+json" \
              -d '{"event_type": "run-tc-workflow", "client_payload": {"branch": "dev1"}}' \
              https://api.github.com/repos/AshotEliteDev/tc/dispatches)
+           
            echo "Response: $response"
        
          # run: |
