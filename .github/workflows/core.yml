@@ -23,7 +23,7 @@
             response=$(curl -X POST \
              -H "Authorization: token ${{ secrets.REMOTE_GITHUB_KEY }}" \
              -H "Accept: application/vnd.github.v3+json" \
-             -d '{"event_type": "run-tc-workflow", "client_payload": {"branch": "${{ steps.extract_branch.outputs.branch }}"}}' \
+             -d '{"event_type": "run-tc-workflow-first", "client_payload": {"branch": "${{ steps.extract_branch.outputs.branch }}"}}' \
              https://api.github.com/repos/AshotEliteDev/tc/dispatches)
            
        
