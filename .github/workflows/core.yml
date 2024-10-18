@@ -6,7 +6,7 @@
     #   - main
    # pull_request:
    #   types:
-   #     - labeled  # or the branch you want to trigger from72
+   #     - labeled  # or the branch you want to trigger from
 
  jobs:
    test-test:
