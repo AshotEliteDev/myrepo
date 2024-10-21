@@ -21,7 +21,11 @@ jobs:
         env:
           # Ensure you are using the correct secret containing your Personal Access Token
           REMOTE_GITHUB_KEY: ${{ secrets.REMOTE_GITHUB_KEY }}
-
-      # Step 3: List the contents of both repositories (Myrepo and TC) to verify
+      # Step 3: Run the my-build.sh script from TC
+      - name: Run TC Build Script
+        run: |
+          cd tc
+          sh ./sh/my-build.sh  # Adjust the path to your script if necessary
+      # Step 4: List the contents of both repositories (Myrepo and TC) to verify
       - name: List Directory
         run: ls -al
