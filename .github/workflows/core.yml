@@ -1,66 +1,66 @@
- name: Trigger Remote Workflow
+#  name: Trigger Remote Workflow
 
- on:
-#   push:
-    # branches:
-    #   - main
+#  on:
+# #   push:
+#     # branches:
+#     #   - main
 
-    pull_request:
-      types:
-        - labeled  # or the branch you want to trigger from72
+#     pull_request:
+#       types:
+#         - labeled  # or the branch you want to trigger from72
 
- jobs:
-   test-test:
-     # if: contains(github.event.label.name, 'ggg-pr')
-     runs-on: ubuntu-latest
-     steps:
-       - name: Extract branch name
-         shell: bash
-         run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-         id: extract_branch
+#  jobs:
+#    test-test:
+#      # if: contains(github.event.label.name, 'ggg-pr')
+#      runs-on: ubuntu-latest
+#      steps:
+#        - name: Extract branch name
+#          shell: bash
+#          run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+#          id: extract_branch
 
-       - name: Trigger Remote Workflow
-         run: |
-            response=$(curl -X POST \
-             -H "Authorization: token ${{ secrets.REMOTE_GITHUB_KEY }}" \
-             -H "Accept: application/vnd.github.v3+json" \
-             -d '{"event_type": "run-tc-workflow-first", "client_payload": {"branch": "${{ steps.extract_branch.outputs.branch }}"}}' \
-             https://api.github.com/repos/AshotEliteDev/tc/dispatches)
-       # Wait for the workflow to complete by polling the workflow run status
-       - name: Wait for Remote Workflow Completion
-         run: |
-            repo="AshotEliteDev/tc"
-            token="${{ secrets.REMOTE_GITHUB_KEY }}"
-            branch="${{ steps.extract_branch.outputs.branch }}"
+#        - name: Trigger Remote Workflow
+#          run: |
+#             response=$(curl -X POST \
+#              -H "Authorization: token ${{ secrets.REMOTE_GITHUB_KEY }}" \
+#              -H "Accept: application/vnd.github.v3+json" \
+#              -d '{"event_type": "run-tc-workflow-first", "client_payload": {"branch": "${{ steps.extract_branch.outputs.branch }}"}}' \
+#              https://api.github.com/repos/AshotEliteDev/tc/dispatches)
+#        # Wait for the workflow to complete by polling the workflow run status
+#        - name: Wait for Remote Workflow Completion
+#          run: |
+#             repo="AshotEliteDev/tc"
+#             token="${{ secrets.REMOTE_GITHUB_KEY }}"
+#             branch="${{ steps.extract_branch.outputs.branch }}"
            
-           # Polling function to get workflow status
-           get_workflow_status() {
-             curl -s \
-               -H "Authorization: token $token" \
-               -H "Accept: application/vnd.github.v3+json" \
-               "https://api.github.com/repos/$repo/actions/runs?branch=$branch&status=in_progress" | jq -r '.workflow_runs[0].status'
-           }
+#            # Polling function to get workflow status
+#            get_workflow_status() {
+#              curl -s \
+#                -H "Authorization: token $token" \
+#                -H "Accept: application/vnd.github.v3+json" \
+#                "https://api.github.com/repos/$repo/actions/runs?branch=$branch&status=in_progress" | jq -r '.workflow_runs[0].status'
+#            }
            
-           # Wait for completion
-           status="in_progress"
-           while [ "$status" == "in_progress" ]; do
-             echo "Waiting for remote workflow to complete..."
-             sleep 30
-             status=$(get_workflow_status)
-           done
+#            # Wait for completion
+#            status="in_progress"
+#            while [ "$status" == "in_progress" ]; do
+#              echo "Waiting for remote workflow to complete..."
+#              sleep 30
+#              status=$(get_workflow_status)
+#            done
            
-           # Get the conclusion (success or failure) of the completed workflow
-           conclusion=$(curl -s \
-             -H "Authorization: token $token" \
-             -H "Accept: application/vnd.github.v3+json" \
-             "https://api.github.com/repos/$repo/actions/runs?branch=$branch&status=completed" | jq -r '.workflow_runs[0].conclusion')
+#            # Get the conclusion (success or failure) of the completed workflow
+#            conclusion=$(curl -s \
+#              -H "Authorization: token $token" \
+#              -H "Accept: application/vnd.github.v3+json" \
+#              "https://api.github.com/repos/$repo/actions/runs?branch=$branch&status=completed" | jq -r '.workflow_runs[0].conclusion')
            
-           if [ "$conclusion" == "success" ]; then
-             echo "Remote workflow completed successfully!"
-           else
-             echo "Remote workflow failed with conclusion: $conclusion"
-             exit 1
-           fi
+#            if [ "$conclusion" == "success" ]; then
+#              echo "Remote workflow completed successfully!"
+#            else
+#              echo "Remote workflow failed with conclusion: $conclusion"
+#              exit 1
+#            fi
  
 
 # name: Trigger Elementor Pro Tests
