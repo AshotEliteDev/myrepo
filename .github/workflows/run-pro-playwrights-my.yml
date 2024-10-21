@@ -25,13 +25,21 @@ jobs:
 
       - name: Clone Elementor-Pro Repository
         run: |
-          cd ~/
-          git config user.name "baghdasarovelementor"
-          git config user.email "norayrb@elementor.red"
-          git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/elementor/elementor-pro.git elementor-pro
-          cd elementor-pro
+          # Step 1: Configure Git user details
+          git config --global user.name "baghdasarovelementor"
+          git config --global user.email "norayrb@elementor.red"
+      
+          # Step 2: Clone the Elementor-Pro repository
+          git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/elementor/elementor-pro.git ~/elementor-pro
+      
+          # Step 3: Change directory to the cloned repository
+          cd ~/elementor-pro
+      
+          # Step 4: Fetch all branches and check out the specified SHA
           git fetch --all
           git checkout ${{ github.sha }}  # Use the SHA from the push event
+      
+          # Step 5: Install dependencies and build
           npm ci && npx grunt
         # run: |
         #   cd ${{ github.workspace }}  # Ensure you are in the correct working directory
