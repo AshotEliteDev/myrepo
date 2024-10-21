@@ -25,28 +25,34 @@ jobs:
 
       - name: Clone Elementor-Pro Repository
         run: |
-          cd ${{ github.workspace }}  # Ensure you are in the correct working directory
-          git clone "https://${{ secrets.GITHUB_TOKEN }}@github.com/elementor/elementor-pro.git" elementor-pro
+          cd ~/
+          git clone "https://${{ secrets.GITHUB_TOKEN }}@github.com/elementor/elementor-pro.git" elementor-pro  # Explicit URL
           cd elementor-pro
-          git checkout ${{ github.sha }}  # Checkout the SHA that triggered the workflow
+          git checkout ${{ github.sha }}  # Use the SHA from the push event
+          npm ci && npx grunt
+        # run: |
+        #   cd ${{ github.workspace }}  # Ensure you are in the correct working directory
+        #   git clone "https://${{ secrets.GITHUB_TOKEN }}@github.com/elementor/elementor-pro.git" elementor-pro
+        #   cd elementor-pro
+        #   git checkout ${{ github.sha }}  # Checkout the SHA that triggered the workflow
 
-      - name: Install & Build Elementor-Pro
-        run: |
-          cd ${{ github.workspace }}/elementor-pro
-          npm ci  # Install dependencies
-          npx grunt  # Build Elementor-Pro
+      # - name: Install & Build Elementor-Pro
+      #   run: |
+      #     cd ${{ github.workspace }}/elementor-pro
+      #     npm ci  # Install dependencies
+      #     npx grunt  # Build Elementor-Pro
 
-      - name: Cache Elementor-Pro Node Modules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-elementor-pro-node-modules
-        with:
-          path: ${{ github.workspace }}/elementor-pro/node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('elementor-pro/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+      # - name: Cache Elementor-Pro Node Modules
+      #   uses: actions/cache@v2
+      #   env:
+      #     cache-name: cache-elementor-pro-node-modules
+      #   with:
+      #     path: ${{ github.workspace }}/elementor-pro/node_modules
+      #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('elementor-pro/package-lock.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-build-${{ env.cache-name }}-
+      #       ${{ runner.os }}-build-
+      #       ${{ runner.os }}-
 
       - name: Trigger Playwright Workflow
         run: |
