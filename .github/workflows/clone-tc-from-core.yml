@@ -1,0 +1,31 @@
+name: Clone TC Private Repo
+
+on:
+  push:
+#    branches:
+#      - main  # Adjust to trigger on the branches you want
+#  pull_request:
+#    types: [opened, synchronize]
+
+jobs:
+  clone-tc:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout Myrepo repository
+      - name: Checkout Myrepo Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # Step 2: Clone TC repository
+      - name: Clone TC Private Repository
+        run: |
+          git clone https://github.com/AshotEliteDev/tc.git tc
+        env:
+          GITHUB_TOKEN: ${{ secrets.REMOTE_GITHUB_KEY }} # Alternatively, you can use a personal access token if necessary
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Alternatively, you can use a personal access token if necessary
+
+      # Optional: List the contents of both repositories (Myrepo and TC) to verify
+      - name: List Directory
+        run: ls -al

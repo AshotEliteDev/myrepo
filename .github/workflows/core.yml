@@ -1,12 +1,12 @@
  name: Trigger Remote Workflow
 
  on:
-   push:
+#   push:
     # branches:
     #   - main
-   # pull_request:
-   #   types:
-   #     - labeled  # or the branch you want to trigger from72
+    pull_request:
+      types:
+        - labeled  # or the branch you want to trigger from72
 
  jobs:
    test-test:
@@ -25,18 +25,86 @@
              -H "Accept: application/vnd.github.v3+json" \
              -d '{"event_type": "run-tc-workflow-first", "client_payload": {"branch": "${{ steps.extract_branch.outputs.branch }}"}}' \
              https://api.github.com/repos/AshotEliteDev/tc/dispatches)
+       # Wait for the workflow to complete by polling the workflow run status
+       - name: Wait for Remote Workflow Completion
+         run: |
+            repo="AshotEliteDev/tc"
+            token="${{ secrets.REMOTE_GITHUB_KEY }}"
+            branch="${{ steps.extract_branch.outputs.branch }}"
            
-       
+           # Polling function to get workflow status
+           get_workflow_status() {
+             curl -s \
+               -H "Authorization: token $token" \
+               -H "Accept: application/vnd.github.v3+json" \
+               "https://api.github.com/repos/$repo/actions/runs?branch=$branch&status=in_progress" | jq -r '.workflow_runs[0].status'
+           }
+           
+           # Wait for completion
+           status="in_progress"
+           while [ "$status" == "in_progress" ]; do
+             echo "Waiting for remote workflow to complete..."
+             sleep 30
+             status=$(get_workflow_status)
+           done
+           
+           # Get the conclusion (success or failure) of the completed workflow
+           conclusion=$(curl -s \
+             -H "Authorization: token $token" \
+             -H "Accept: application/vnd.github.v3+json" \
+             "https://api.github.com/repos/$repo/actions/runs?branch=$branch&status=completed" | jq -r '.workflow_runs[0].conclusion')
+           
+           if [ "$conclusion" == "success" ]; then
+             echo "Remote workflow completed successfully!"
+           else
+             echo "Remote workflow failed with conclusion: $conclusion"
+             exit 1
+           fi
+ 
 
-         # echo "Response: $response"
-
-         # run: |
-         #   curl -X POST \
-         #     -H "Authorization: token ${{ secrets.REMOTE_GITHUB_KEY }}" \
-         #     -H "Accept: application/vnd.github.v3+json" \
-         #     https://api.github.com/repos/AshotEliteDev/tc/actions/workflows/main.yml/dispatches \
-         #     -d '{"ref":"main","inputs":{"trigger_uuid":"${{ github.sha }}", "custom_value": "Steve Jobs"}}'
-
-
-        # -d '{"event_type": "run-tc-workflow", "client_payload": {"branch": "dev1"}}'
-
+# name: Trigger Elementor Pro Tests
+#
+# on:
+#   push:
+##   pull_request:
+##     types: [labeled]
+#
+# jobs:
+#   check-label:
+##     if: contains(github.event.pull_request.labels.*.name, 'run-pro-tests')
+#     runs-on: ubuntu-latest
+#     steps:
+#       # Step to checkout the core repository
+#       - name: Checkout Core Repository
+#         uses: actions/checkout@v3
+#         with:
+#           fetch-depth: 0
+#
+#       # Step to clone the Elementor-Pro repository next to the core repo
+#       - name: Clone Elementor-Pro Repository
+#         run: |
+#           git clone https://github.com/elementor/elementor-pro.git elementor-pro
+#
+#       # Step to set up Node.js (required for Playwright)
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: '16' # Specify your Node.js version
+#
+#       # Step to install dependencies for Elementor-Pro
+#       - name: Install Dependencies
+#         working-directory: elementor-pro
+#         run: npm install
+#
+#
+#       # Step to run the Playwright tests defined in playwright.yml
+#       - name: Run Playwright Tests
+#         working-directory: elementor-pro
+#         run: |
+#           npm run playwright # Adjust this based on how you run the tests
+#
+#       # Optional: Extract branch name if needed for further steps
+#       - name: Extract branch name
+#         shell: bash
+#         run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+#         id: extract_branch
