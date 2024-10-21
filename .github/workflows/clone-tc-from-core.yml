@@ -25,7 +25,8 @@ jobs:
       - name: Run TC Build Script
         run: |
           cd tc
-          sh ./sh/my-build.sh  # Adjust the path to your script if necessary
+          var="Yerevan"
+          sh ./sh/my-build.sh "$var"  # Passing the variable to the script
       # Step 4: List the contents of both repositories (Myrepo and TC) to verify
       - name: List Directory
         run: ls -al
