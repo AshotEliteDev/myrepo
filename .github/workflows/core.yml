@@ -1,3 +1,37 @@
+name: Trigger Elementor Pro Tests
+
+on:
+  push:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  check-label:
+    if: contains(github.event.pull_request.labels.*.name, 'run-pro-tests')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract branch name
+        id: extract_branch
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
+
+      - name: Trigger Elementor-Pro Tests From Core
+        run: |
+          response=$(curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN6 }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{"event_type": "run-from-core", "client_payload": {"branch": "${{ env.branch }}"}}' \
+            https://api.github.com/repos/elementor/elementor-pro/dispatches)
+
+          echo "Response: $response"
+          
+          if [[ "$response" == *"errors"* ]]; then
+            echo "Error occurred: $response" >&2
+            exit 1
+          else
+            echo "Triggered Elementor-Pro tests successfully."
+          fi
+
+
 #  name: Trigger Remote Workflow
 
 #  on:
