@@ -17,7 +17,7 @@ jobs:
       - name: Trigger Elementor-Pro Tests From Core
         run: |
           response=$(curl -X POST \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN6 }}" \
+            -H "Authorization: token ${{ secret.REMOTE_GITHUB_KEY }}" \
             -H "Accept: application/vnd.github.v3+json" \
             -d '{"event_type": "run-from-core", "client_payload": {"branch": "${{ env.branch }}"}}' \
             https://api.github.com/repos/elementor/elementor-pro/dispatches)
