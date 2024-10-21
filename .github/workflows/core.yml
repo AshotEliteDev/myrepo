@@ -1,76 +1,76 @@
-name: Trigger Elementor Pro Tests
+# name: Trigger Elementor Pro Tests
 
-on:
+# on:
+#   push:
+#   # pull_request:
+#   #   types: [labeled]
+
+# jobs:
+#   check-label:
+#     # if: contains(github.event.pull_request.labels.*.name, 'run-pro-tests')
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Extract branch name
+#         id: extract_branch
+#         run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
+
+#       - name: Trigger Elementor-Pro Tests From Core
+#         run: |
+#           # Print environment for debugging purposes
+#           echo "Branch: ${{ env.branch }}"
+          
+#           # Set the response and capture the HTTP status code
+#           response=$(curl -w "%{http_code}" -o response.txt -s -X POST \
+#             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+#             -H "Accept: application/vnd.github.v3+json" \
+#             -d '{"event_type": "run-pro-tests", "client_payload": {"branch": "internal/ED-15774-internal-execute-custom-core-tests-from-core-repo"}}' \
+#             https://api.github.com/repos/elementor/elementor/dispatches)
+          
+#           # Read the response body
+#           body=$(cat response.txt)
+
+#           # Print the response body and status code
+#           echo "Response Body: $body"
+#           echo "HTTP Status Code: $response"
+
+#           # Check if the HTTP status code indicates an error (non-2xx response)
+#           if [[ "$response" -ge 400 ]]; then
+#             echo "Error occurred: $body" >&2
+#             exit 1
+#           fi
+          
+#           echo "Triggered Elementor-Pro tests successfully."
+
+
+
+ name: Trigger Remote Workflow
+
+ on:
   push:
-  # pull_request:
-  #   types: [labeled]
+    # branches:
+    #   - main
 
-jobs:
-  check-label:
-    # if: contains(github.event.pull_request.labels.*.name, 'run-pro-tests')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Extract branch name
-        id: extract_branch
-        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
+    # pull_request:
+    #   types:
+    #     - labeled  # or the branch you want to trigger from72
 
-      - name: Trigger Elementor-Pro Tests From Core
-        run: |
-          # Print environment for debugging purposes
-          echo "Branch: ${{ env.branch }}"
-          
-          # Set the response and capture the HTTP status code
-          response=$(curl -w "%{http_code}" -o response.txt -s -X POST \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            -d '{"event_type": "run-pro-tests", "client_payload": {"branch": "internal/ED-15774-internal-execute-custom-core-tests-from-core-repo"}}' \
-            https://api.github.com/repos/elementor/elementor/dispatches)
-          
-          # Read the response body
-          body=$(cat response.txt)
+ jobs:
+   test-test:
+     # if: contains(github.event.label.name, 'ggg-pr')
+     runs-on: ubuntu-latest
+     steps:
+       - name: Extract branch name
+         shell: bash
+         run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+         id: extract_branch
 
-          # Print the response body and status code
-          echo "Response Body: $body"
-          echo "HTTP Status Code: $response"
-
-          # Check if the HTTP status code indicates an error (non-2xx response)
-          if [[ "$response" -ge 400 ]]; then
-            echo "Error occurred: $body" >&2
-            exit 1
-          fi
-          
-          echo "Triggered Elementor-Pro tests successfully."
-
-
-
-#  name: Trigger Remote Workflow
-
-#  on:
-# #   push:
-#     # branches:
-#     #   - main
-
-#     pull_request:
-#       types:
-#         - labeled  # or the branch you want to trigger from72
-
-#  jobs:
-#    test-test:
-#      # if: contains(github.event.label.name, 'ggg-pr')
-#      runs-on: ubuntu-latest
-#      steps:
-#        - name: Extract branch name
-#          shell: bash
-#          run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-#          id: extract_branch
-
-#        - name: Trigger Remote Workflow
-#          run: |
-#             response=$(curl -X POST \
-#              -H "Authorization: token ${{ secrets.REMOTE_GITHUB_KEY }}" \
-#              -H "Accept: application/vnd.github.v3+json" \
-#              -d '{"event_type": "run-tc-workflow-first", "client_payload": {"branch": "${{ steps.extract_branch.outputs.branch }}"}}' \
-#              https://api.github.com/repos/AshotEliteDev/tc/dispatches)
+       - name: Trigger Remote Workflow
+         run: |
+            response=$(curl -X POST \
+             -H "Authorization: token ${{ secrets.REMOTE_GITHUB_KEY }}" \
+             -H "Accept: application/vnd.github.v3+json" \
+             -d '{"event_type": "run-tc-workflow-first", "client_payload": {"branch": "${{ steps.extract_branch.outputs.branch }}"}}' \
+             https://api.github.com/repos/AshotEliteDev/tc/dispatches)
 #        # Wait for the workflow to complete by polling the workflow run status
 #        - name: Wait for Remote Workflow Completion
 #          run: |
