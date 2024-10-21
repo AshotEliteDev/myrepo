@@ -1,28 +1,33 @@
 name: Run Elementor Pro Playwrights
 
 on:
-#  pull_request:
-#    types: [ labeled ]
-  push:
+  push:  # Replace this with the actual trigger
 
 jobs:
-  clone-and-build:
-#    if: contains(github.event.pull_request.labels.*.name, 'run-pw-tests')
+  clone-tc:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout Elementor repository
       - name: Checkout Elementor Repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      # - name: Cache Elementor Node Modules
-      #   uses: actions/checkout@v3
-      #   with:
-      #     repository: 'elementor/elementor-pro'
-      #     path: ${{ github.workspace }}
-      #     token: ${{ secrets.GITHUB_TOKEN }}
+      # Step 2: Cache node modules
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
 
+      # Step 3: Clone Elementor-Pro Repository
       - name: Clone Elementor-Pro Repository
         run: |
           # Step 1: Configure Git user details
@@ -30,7 +35,7 @@ jobs:
           git config --global user.email "norayrb@elementor.red"
 
           # Step 2: Clone the Elementor-Pro repository using the PAT
-          git clone "https://${{ secrets.PAT_TOKEN }}@github.com/elementor/elementor-pro.git" ~/elementor-pro
+          git clone "https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/elementor/elementor-pro.git" ~/elementor-pro
 
           # Step 3: Change directory to the cloned repository
           cd ~/elementor-pro
@@ -41,54 +46,13 @@ jobs:
 
           # Step 5: Install dependencies and build
           npm ci && npx grunt
-          
-      # AUTH XNDIRA
-        # run: |
-        #   # Step 1: Configure Git user details
-        #   git config --global user.name "baghdasarovelementor"
-        #   git config --global user.email "norayrb@elementor.red"
-      
-        #   # Step 2: Clone the Elementor-Pro repository using the token
-        #   git clone "https://${{ secrets.GITHUB_TOKEN }}:x-oauth-basic@github.com/elementor/elementor-pro.git" ~/elementor-pro
-      
-        #   # Step 3: Change directory to the cloned repository
-        #   cd ~/elementor-pro
-      
-        #   # Step 4: Fetch all branches and check out the specified SHA
-        #   git fetch --all
-        #   git checkout ${{ github.sha }}  # Use the SHA from the push event
-      
-        #   # Step 5: Install dependencies and build
-        #   npm ci && npx grunt
-# ---------------------
-        # run: |
-        #   cd ${{ github.workspace }}  # Ensure you are in the correct working directory
-        #   git clone "https://${{ secrets.GITHUB_TOKEN }}@github.com/elementor/elementor-pro.git" elementor-pro
-        #   cd elementor-pro
-        #   git checkout ${{ github.sha }}  # Checkout the SHA that triggered the workflow
 
-      # - name: Install & Build Elementor-Pro
-      #   run: |
-      #     cd ${{ github.workspace }}/elementor-pro
-      #     npm ci  # Install dependencies
-      #     npx grunt  # Build Elementor-Pro
-
-      # - name: Cache Elementor-Pro Node Modules
-      #   uses: actions/cache@v2
-      #   env:
-      #     cache-name: cache-elementor-pro-node-modules
-      #   with:
-      #     path: ${{ github.workspace }}/elementor-pro/node_modules
-      #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('elementor-pro/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-build-${{ env.cache-name }}-
-      #       ${{ runner.os }}-build-
-      #       ${{ runner.os }}-
-
-      - name: Trigger Playwright Workflow
-        run: |
-          curl -X POST \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            -d '{"event_type": "trigger-from-core", "client_payload": {"branch": "${{ github.sha }}"}}' \
-            https://api.github.com/repos/elementor/elementor-pro/dispatches
+      # Step 4: Save Pro Build to Cache (if needed)
+      - name: Save Pro Build to Cache
+        uses: actions/cache@v2
+        env:
+          key: ${{ github.sha }}-pro
+        with:
+          path: ~/elementor-pro
+          key: ${{ env.key }}
+          restore-keys: ${{ env.key }}
