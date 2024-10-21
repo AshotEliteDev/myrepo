@@ -23,8 +23,8 @@ jobs:
         run: |
           git clone https://github.com/AshotEliteDev/tc.git tc
         env:
-          GITHUB_TOKEN: ${{ secrets.REMOTE_GITHUB_KEY }} # Alternatively, you can use a personal access token if necessary
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Alternatively, you can use a personal access token if necessary
+          # GITHUB_TOKEN: ${{ secrets.REMOTE_GITHUB_KEY }} # Alternatively, you can use a personal access token if necessary
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Alternatively, you can use a personal access token if necessary
 
       # Optional: List the contents of both repositories (Myrepo and TC) to verify
       - name: List Directory
