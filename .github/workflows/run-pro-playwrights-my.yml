@@ -26,8 +26,11 @@ jobs:
       - name: Clone Elementor-Pro Repository
         run: |
           cd ~/
-          echo "${{ secrets.GITHUB_TOKEN }}" | git clone https://github.com/elementor/elementor-pro.git elementor-pro
+          git clone https://github.com/elementor/elementor-pro.git elementor-pro
           cd elementor-pro
+          git config user.name "baghdasarovelementor"
+          git config user.email "norayrb@elementor.red"
+          git fetch --all
           git checkout ${{ github.sha }}  # Use the SHA from the push event
           npm ci && npx grunt
         # run: |
