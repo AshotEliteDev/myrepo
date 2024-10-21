@@ -24,7 +24,7 @@ jobs:
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             -d '{"event_type": "run-from-core", "client_payload": {"branch": "${{ env.branch }}"}}' \
-            https://api.github.com/repos/elementor/elementor-pro/dispatches)
+            https://api.github.com/repos/elementor/elementor/dispatches)
           
           # Read the response body
           body=$(cat response.txt)
