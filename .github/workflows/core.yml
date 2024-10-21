@@ -23,7 +23,7 @@ jobs:
           response=$(curl -w "%{http_code}" -o response.txt -s -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            -d '{"event_type": "run-from-core", "client_payload": {"branch": "${{ env.branch }}"}}' \
+            -d '{"event_type": "run-pro-tests", "client_payload": {"branch": "${{ env.branch }}"}}' \
             https://api.github.com/repos/elementor/elementor/dispatches)
           
           # Read the response body
